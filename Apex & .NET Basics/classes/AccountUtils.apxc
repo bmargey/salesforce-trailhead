@@ -1,0 +1,17 @@
+public class AccountUtils {
+  	
+	/*
+		Apex class that returns a List of Account objects for a user-specified state.
+		Integrated SOQL search.
+	*/
+
+    public static List<Account> accountsByState(String query) {
+        
+        List<Account> accts = new List<Account>(); 
+        accts = [SELECT Id,Name 
+                 FROM Account
+                 WHERE BillingState =: query];
+        System.debug(accts.size() + ' accounts found.');
+        return accts;
+    }
+}

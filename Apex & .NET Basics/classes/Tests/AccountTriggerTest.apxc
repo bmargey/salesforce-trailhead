@@ -1,0 +1,32 @@
+@isTest
+private class AccountTriggerTest {
+  
+    @isTest static void TestCAStates() {
+    
+        //create test data
+        List<Account> testAccs = new List<Account>();  
+        
+        for (Integer i = 0;i < 200; i++) {
+            Account acc = new Account(
+                Name='AccountTriggerTest ' + i,
+                BillingState='CA'
+            );
+            
+            testAccs.add(acc);
+        }    
+        
+        //do some testing
+        Test.startTest();
+        insert testAccs;
+        Test.stopTest();
+        
+        //check results
+        List<Account> results = [SELECT Id,BillingState,ShippingState 
+                                 FROM Account 
+                                 WHERE name LIKE 'AccountTriggerTest%'
+                                 AND ShippingState = 'CA'];
+        
+        System.assertEquals(200,results.size(),'200 acc creations ship state okay.');
+       
+    }
+}
