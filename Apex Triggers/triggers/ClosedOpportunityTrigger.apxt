@@ -1,0 +1,16 @@
+trigger ClosedOpportunityTrigger on Opportunity (after insert, after update) {
+    
+    List<Task> tsks = new List<Task>();
+    
+    for (Opportunity opp : [SELECT Id FROM Opportunity WHERE Id IN :Trigger.New AND StageName = 'Closed Won']) {
+    
+        // Create a task
+        Task tsk = new Task(Subject='Follow Up Test Task', WhatId=opp.Id);
+        tsks.add(tsk);    
+    }
+    
+    // batch insert
+    if (tsks.size() > 0) {
+      insert tsks;
+    }
+}
