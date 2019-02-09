@@ -1,0 +1,22 @@
+public class ContactAndLeadSearch {
+  
+    public static void createLead(String fname, String lname, String company)  {
+        Lead nlead = new Lead(FirstName=fname, LastName=lname, Company=company);
+        try {
+            insert nlead;
+        } 
+        catch (DmlException e) {
+            System.debug('EXCP: ' + e.getMessage());
+        }
+    }
+    
+    public static List<List<sObject>> searchContactsAndLeads(String match) {
+        
+        List<List<sObject>> landc = [FIND :match IN NAME FIELDS
+                                    RETURNING 
+                                     Lead(ID,FirstName,LastName),
+                                     Contact(Id,FirstName,LastName)];
+        
+        return landc;
+    }
+}
