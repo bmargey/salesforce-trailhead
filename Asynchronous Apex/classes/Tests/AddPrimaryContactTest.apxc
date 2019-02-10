@@ -1,0 +1,40 @@
+@isTest
+public class AddPrimaryContactTest {
+    
+    @testSetup 
+    static void setup() {
+        
+        // create some test accounts
+        List<Account> accounts = new List<Account>();
+        String[] bstates = new String[]{'NY','CA'};
+    
+        for (String bs : bstates) {
+            for (Integer i = 0; i < 50; i++) {
+                accounts.add(
+                    new Account(
+                    Name = 'Test ' + i,
+                        BillingState = bs
+                  )
+                );
+            }
+        }
+        insert accounts;
+        
+    }
+    
+    static testmethod void testQueueable() {
+        
+        // create our Queueable instance
+        AddPrimaryContact addCon = new AddPrimaryContact(new Contact(LastName='Smith'), 'CA');
+        
+        // startTest/stopTest block to force async processes to run
+        Test.startTest();    
+        system.enqueueJob(addCon);
+        Test.stopTest();        
+        
+        // run checks
+        List<Account> caAcc = [SELECT Id FROM Account WHERE BillingState = 'CA'];
+        System.assertEquals(50, [SELECT count() FROM Contact WHERE AccountId IN :caAcc]);
+    }
+    
+}
