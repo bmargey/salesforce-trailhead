@@ -1,0 +1,19 @@
+@RestResource(urlMapping='/Accounts/*/contacts')
+global with sharing class AccountManager {
+    
+    @HttpGet
+    global static Account getAccount() {
+        
+        // standard rest req setup
+        RestRequest request = RestContext.request;
+        
+        // grab the account id from the middle of uri
+        String acc_id = request.requestURI.substringBetween('Accounts/','/contacts');
+        system.debug(acc_id);
+        Account result = [SELECT 
+                          Id,Name, 
+                          (SELECT Id,Name FROM Contacts)
+                          FROM Account WHERE Id = :acc_id];
+        return result;
+    }
+}

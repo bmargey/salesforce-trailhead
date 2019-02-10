@@ -1,0 +1,42 @@
+@IsTest
+private class AccountManagerTest  {
+    @isTest static void testgetAccount() {
+        
+        // set up test data
+        Id recordId = createTestRecord();
+        
+        // set up a test request
+        RestRequest request = new RestRequest();
+        request.requestUri = 'https://playful-goat-nhkr7m-dev-ed.lightning.force.com/services/apexrest/Accounts/'
+            + recordId
+            + '/contacts';
+        request.httpMethod = 'GET';
+        RestContext.request = request;
+        
+        // call the method to test
+        Account thisAccount = AccountManager.getAccount();
+        
+        // verify results
+        System.assert(thisAccount != null);
+        System.assertEquals(thisAccount.Name, 'Test Acc record', 'Account returned okay.');
+    }
+    
+    // helper methods
+    static Id createTestRecord() {
+        
+        // create test record
+        Account acctest = new Account(Name='Test Acc record');
+        insert acctest;
+        
+        createTestContact(acctest);
+        
+        return acctest.Id;
+    }
+    
+    static Id createTestContact(Account acc) {
+        Contact con = new Contact(LastName='Bunts',Account=acc);
+        insert con;
+        
+        return con.Id;
+    }
+}
