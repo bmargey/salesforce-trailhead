@@ -1,0 +1,23 @@
+@IsTest
+private class AccountProcessorTest {
+  
+  @IsTest
+  private static void testCountContacts() {
+  
+    //set up test env
+    Account acc = new Account(Name='Chips Ltd.');
+    insert acc;
+      
+    Contact con = new Contact(LastName='Hunter', AccountId=acc.Id);
+    insert con;
+      
+    Test.startTest();
+    AccountProcessor.countContacts(new List<String>{acc.Id});
+    Test.stopTest();
+    
+    //checks
+    Account accCheck = [SELECT Number_of_Contacts__c
+                       FROM Account WHERE Id = :acc.Id];
+     system.assertEquals(1, Integer.valueOf(accCheck.Number_of_Contacts__c), 'custom field populated with correct count'); 
+  }
+}

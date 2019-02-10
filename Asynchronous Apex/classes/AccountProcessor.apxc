@@ -1,0 +1,24 @@
+public class AccountProcessor {
+
+    @future(callout=true)
+    public static void countContacts(List<String> accs) {
+        
+        List<Account> accUpdate = new List<Account>();
+        for (String acc_id : accs) {
+            
+            // find contacts
+            Contact[] cons = [SELECT Id,Name 
+                              FROM Contact
+                             WHERE AccountId = :acc_id]; 
+             Integer c = cons.size(); 
+            system.debug(c);
+            Account upd = new Account(Id=acc_id,Number_of_Contacts__c=c);
+            accUpdate.add(upd); 
+         }
+        
+        system.debug(accUpdate.size());
+        
+        // update records in bulk
+        update accUpdate;
+    }
+}
