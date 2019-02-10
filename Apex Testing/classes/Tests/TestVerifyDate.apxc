@@ -1,0 +1,29 @@
+@isTest
+private class TestVerifyDate {
+    
+    // where date2 beyond 30 days of date1
+    @isTest static void TestCheckEom() {
+        Date d1 = date.newInstance(2019,01,01);
+        Date d2 = date.newInstance(2019,06,05);
+        Date expeom = date.newInstance(2019,01,31);
+        Date eom = VerifyDate.CheckDates(d1,d2);
+        system.assertEquals(expeom, eom, 'd2 beyond 30days of d1 EoM returned expected');
+    }
+  
+    // where date2 is within 30 days of date1  
+    @isTest static void TestCheckDt() {
+        Date d1 = date.newInstance(2019,01,01);
+    Date d2 = date.newInstance(2019,01,02);
+        Date dt = VerifyDate.CheckDates(d1,d2);
+        system.assertEquals(d2, dt, 'd2 within 30 days d2 returned expected');
+    }
+    
+    // where date2 is in the past
+    @isTest static void TestPastd2() {
+        Date d1 = date.newInstance(2019,01,01);
+    Date d2 = date.newInstance(2018,01,02);
+        Date expeom = date.newInstance(2018,01,31);
+        Date dt = VerifyDate.CheckDates(d2,d1);
+        system.assertEquals(expeom, dt, 'd2 in past, EoM returned expected');
+    }
+}
