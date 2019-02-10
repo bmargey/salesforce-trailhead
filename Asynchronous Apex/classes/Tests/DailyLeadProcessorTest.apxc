@@ -1,0 +1,39 @@
+@isTest
+private class DailyLeadProcessorTest {
+
+    public static String CRON_EXP = '0 0 0 15 3 ? 2022';
+    
+    static testmethod void testScheduledJob() {
+        
+        // insert some leads
+        List<Lead> leads = new List<Lead>();
+        for (Integer i = 0; i < 200; i++){
+            leads.add(
+              new Lead(
+                  Company = 'Company',
+                    LastName = 'LName ' + i,
+                    Status = 'Open'
+                )
+            );
+        }
+        insert leads;
+        
+        Set<Id> inserted = (new Map<Id,SObject>(leads).keySet());
+        
+        Test.startTest();
+        
+        // schedule the test job
+        String jobId = System.schedule('ScheduledApexTest',CRON_EXP, 
+            new DailyLeadProcessor());         
+        
+        Test.stopTest();
+        
+        List<Lead> check = [SELECT Id FROM Lead 
+                            WHERE LeadSource = 'Dreamforce'
+                           AND Id IN :inserted];
+        
+        System.assertEquals(check.size(), 
+            inserted.size(), 
+            '200 Leads updated as expected');
+    }
+}
