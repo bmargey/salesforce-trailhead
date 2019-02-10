@@ -1,0 +1,30 @@
+@isTest
+private class TestRestrictContactByName {
+    
+    @isTest static void TestBlock() {
+        
+        //Test contact
+        Contact c = new Contact(FirstName='Billy',LastName='Smith');
+        insert c;
+       
+        Test.startTest();
+        c.LastName = 'INVALIDNAME';
+        Database.SaveResult result = Database.update(c, false);
+        Test.stopTest();
+       
+        system.assertEquals(false, result.isSuccess(), 'INVALIDNAME update blocked ok'); 
+    }
+    
+    @isTest static void TestPass() {
+        String testName = 'Bunterrr';
+        
+        //Test contact
+        Contact c = new Contact(FirstName='Billy',LastName='Smith');
+        insert c;
+       
+        c.LastName = testName;
+        update c;
+        
+        system.assertEquals(testName, c.LastName, 'Update valid name ok');
+    }
+}
